@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Progress &amp; Performance Report — Reduan Typing Master</title>
+  <meta name="description" content="Your typing progress: best WPM, best accuracy, total tests, average WPM, and your saved test history." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html"><span class="brand-mark">⌨</span><span>Reduan Typing Master<small>Reduan Computer</small></span></a>
+      <nav class="site-nav" id="siteNav" aria-label="Main navigation">
+        <a href="index.html">Home</a>
+        <a href="english.html">English Practice</a>
+        <a href="bangla.html">Bangla Practice</a>
+        <a href="test.html">Speed Test</a>
+        <a href="progress.html">Progress</a>
+      </nav>
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">☰</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <p class="eyebrow">Performance Report</p>
+        <h1>Your Progress</h1>
+        <p class="lead">Everything here comes from Speed Test results you chose to save on this device. Practice sessions are never saved automatically.</p>
+
+        <div class="stats-row">
+          <div class="stat highlight"><strong id="progBestWpm">0</strong><span>Best WPM</span></div>
+          <div class="stat"><strong id="progBestAccuracy">—</strong><span>Best Accuracy</span></div>
+          <div class="stat"><strong id="progTotal">0</strong><span>Total Tests</span></div>
+          <div class="stat"><strong id="progAvgWpm">0</strong><span>Average WPM</span></div>
+        </div>
+
+        <div class="empty-state" id="emptyState">
+          <h3>No tests saved yet</h3>
+          <p>Take a Speed Test and click “Save Result” — your history will appear here.</p>
+          <a class="btn btn-primary" href="test.html">Take a Speed Test →</a>
+        </div>
+
+        <div class="table-wrap" id="historyTableWrap" style="display:none;">
+          <table>
+            <thead>
+              <tr><th>Date</th><th>Mode</th><th>Time</th><th>WPM</th><th>Accuracy</th></tr>
+            </thead>
+            <tbody id="historyBody"></tbody>
+          </table>
+          <div class="controls" style="margin-top:1.2rem;">
+            <button class="btn btn-danger" id="clearHistoryBtn" type="button">Clear History</button>
+            <a class="btn btn-secondary" href="test.html">Take Another Test →</a>
+          </div>
+        </div>
+
+        <div class="note"><strong>Where is this stored?</strong> In your own browser, under the key <code>reduan-typing-results</code> in localStorage. Clearing your browser data clears this history. Nothing is sent to any server.</div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <p><strong style="color:#fff;">Reduan Typing Master</strong> — by Reduan Hossain, Reduan Computer</p>
+        <p>Learn typing in English and Bangla, free in your browser.</p>
+      </div>
+      <div>
+        <p>Email: <a href="mailto:reduan.digital@gmail.com">reduan.digital@gmail.com</a></p>
+        <p>Facebook: <a href="https://www.facebook.com/reduancomputer" target="_blank" rel="noopener">facebook.com/reduancomputer</a></p>
+        <p>© <span id="year">2026</span> Reduan Computer</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

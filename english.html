@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>English Typing Practice — Reduan Typing Master</title>
+  <meta name="description" content="Practice English typing with real passages, live WPM, accuracy, mistakes and timer. Easy, Medium and Hard levels." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html"><span class="brand-mark">⌨</span><span>Reduan Typing Master<small>Reduan Computer</small></span></a>
+      <nav class="site-nav" id="siteNav" aria-label="Main navigation">
+        <a href="index.html">Home</a>
+        <a href="english.html">English Practice</a>
+        <a href="bangla.html">Bangla Practice</a>
+        <a href="test.html">Speed Test</a>
+        <a href="progress.html">Progress</a>
+      </nav>
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">☰</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <p class="eyebrow">English Practice</p>
+        <h1>English Typing Practice</h1>
+        <p class="lead">Type the passage below. Correct letters turn green, wrong ones turn red. The timer starts on your first keystroke.</p>
+
+        <input type="hidden" id="practiceMode" value="english" />
+
+        <div class="controls">
+          <div class="field">
+            <label for="difficulty">Difficulty</label>
+            <select id="difficulty">
+              <option value="easy">Easy — short, simple sentences</option>
+              <option value="medium">Medium — longer passages</option>
+              <option value="hard">Hard — long sentences, punctuation &amp; numbers</option>
+            </select>
+          </div>
+          <div class="actions">
+            <button class="btn btn-primary" id="newPassageBtn" type="button">New Passage</button>
+            <button class="btn btn-secondary" id="restartBtn" type="button">Restart</button>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat highlight"><strong id="statWpm">0</strong><span>WPM</span></div>
+          <div class="stat"><strong id="statAccuracy">—</strong><span>Accuracy</span></div>
+          <div class="stat"><strong id="statMistakes">0</strong><span>Mistakes</span></div>
+          <div class="stat"><strong id="statTime">0:00</strong><span>Time</span></div>
+        </div>
+
+        <div class="passage" id="passage" aria-label="Passage to type"></div>
+        <div class="progress-bar"><div id="progressFill"></div></div>
+        <p class="progress-text" id="statProgress">0 / 0 characters</p>
+
+        <label for="typingInput">Type here</label>
+        <textarea id="typingInput" class="typing-input" placeholder="Click here and start typing the passage above…" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
+        <p class="status-line" id="statusLine">Start typing in the box above. The timer starts on your first keystroke.</p>
+
+        <div class="keyboard" id="keyboard" aria-label="On-screen QWERTY keyboard — highlights the next key"></div>
+        <p class="kb-caption">The highlighted key is the next letter to type. Click the passage to focus the typing box again.</p>
+
+        <div class="note"><strong>Scoring rule:</strong> mistakes are counted from the text that is on screen right now. If you press Backspace and fix a wrong letter, that mistake disappears from the count — it is not counted twice. WPM = (correct characters ÷ 5) ÷ minutes.</div>
+
+        <p>Want a timed score you can save? <a href="test.html">Take the Speed Test →</a> &nbsp;•&nbsp; Try Bangla too: <a href="bangla.html">Bangla Practice →</a></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <p><strong style="color:#fff;">Reduan Typing Master</strong> — by Reduan Hossain, Reduan Computer</p>
+        <p>Learn typing in English and Bangla, free in your browser.</p>
+      </div>
+      <div>
+        <p>Email: <a href="mailto:reduan.digital@gmail.com">reduan.digital@gmail.com</a></p>
+        <p>Facebook: <a href="https://www.facebook.com/reduancomputer" target="_blank" rel="noopener">facebook.com/reduancomputer</a></p>
+        <p>© <span id="year">2026</span> Reduan Computer</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

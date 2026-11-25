@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Typing Speed Test — Reduan Typing Master</title>
+  <meta name="description" content="Timed typing speed test: 30 seconds, 1 minute or 2 minutes. Real WPM, accuracy, correct and wrong characters, and a saveable result." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html"><span class="brand-mark">⌨</span><span>Reduan Typing Master<small>Reduan Computer</small></span></a>
+      <nav class="site-nav" id="siteNav" aria-label="Main navigation">
+        <a href="index.html">Home</a>
+        <a href="english.html">English Practice</a>
+        <a href="bangla.html">Bangla Practice</a>
+        <a href="test.html">Speed Test</a>
+        <a href="progress.html">Progress</a>
+      </nav>
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">☰</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <p class="eyebrow">Speed Test</p>
+        <h1>Typing Speed Test</h1>
+        <p class="lead">Choose a time and a difficulty, click Start Test, then type. The countdown starts on your <strong>first keystroke</strong> — not on Start — and the test finishes automatically when time runs out.</p>
+
+        <div class="controls">
+          <div class="field">
+            <label for="testTime">Test time</label>
+            <select id="testTime">
+              <option value="30">30 seconds</option>
+              <option value="60" selected>1 minute</option>
+              <option value="120">2 minutes</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="testDifficulty">Difficulty</label>
+            <select id="testDifficulty">
+              <option value="easy">Easy</option>
+              <option value="medium" selected>Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+          </div>
+          <div class="actions">
+            <button class="btn btn-primary" id="startTestBtn" type="button">Start Test</button>
+          </div>
+        </div>
+
+        <div class="timer-big" id="countdown">1:00</div>
+
+        <div class="stats-row">
+          <div class="stat highlight"><strong id="testWpm">0</strong><span>WPM</span></div>
+          <div class="stat"><strong id="testAccuracy">—</strong><span>Accuracy</span></div>
+          <div class="stat"><strong id="testMistakes">0</strong><span>Mistakes</span></div>
+          <div class="stat"><strong id="testElapsed">0:00</strong><span>Elapsed</span></div>
+        </div>
+
+        <div class="passage" id="testPassage" aria-label="Test passage to type"></div>
+        <div class="progress-bar"><div id="testProgressFill"></div></div>
+        <p class="progress-text" id="testProgress">0 / 0 characters</p>
+
+        <label for="testInput">Type here</label>
+        <textarea id="testInput" class="typing-input" placeholder="Click Start Test first, then type here…" spellcheck="false" autocomplete="off" autocapitalize="off" disabled></textarea>
+        <p class="status-line" id="testStatus">Choose a time and difficulty, then click Start Test.</p>
+
+        <div class="keyboard" id="testKeyboard" aria-label="On-screen QWERTY keyboard — highlights the next key"></div>
+        <p class="kb-caption">The highlighted key is the next letter to type.</p>
+
+        <div class="results" id="resultsPanel" aria-live="polite">
+          <h3>Your result</h3>
+          <div class="results-grid">
+            <div><strong id="resultWpm">0</strong><span>WPM</span></div>
+            <div><strong id="resultAccuracy">—</strong><span>Accuracy</span></div>
+            <div><strong id="resultWords">0</strong><span>Total words typed</span></div>
+            <div><strong id="resultCorrect">0</strong><span>Correct characters</span></div>
+            <div><strong id="resultWrong">0</strong><span>Wrong characters</span></div>
+            <div><strong>Saved?</strong><span id="savedMsg">Not saved yet</span></div>
+          </div>
+          <div class="controls" style="margin-bottom:0;">
+            <button class="btn btn-primary" id="saveResultBtn" type="button">Save Result</button>
+            <button class="btn btn-secondary" id="tryAgainBtn" type="button">Try Again</button>
+            <a class="btn btn-navy" href="progress.html">View Progress →</a>
+          </div>
+        </div>
+
+        <div class="note"><strong>How it is scored:</strong> WPM = (correct characters ÷ 5) ÷ minutes. Accuracy = correct ÷ (correct + wrong) × 100. Both are calculated from the text on screen when time runs out. Fixing a mistake with Backspace removes it from the count. Results are saved only when you click “Save Result”.</div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <p><strong style="color:#fff;">Reduan Typing Master</strong> — by Reduan Hossain, Reduan Computer</p>
+        <p>Learn typing in English and Bangla, free in your browser.</p>
+      </div>
+      <div>
+        <p>Email: <a href="mailto:reduan.digital@gmail.com">reduan.digital@gmail.com</a></p>
+        <p>Facebook: <a href="https://www.facebook.com/reduancomputer" target="_blank" rel="noopener">facebook.com/reduancomputer</a></p>
+        <p>© <span id="year">2026</span> Reduan Computer</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
