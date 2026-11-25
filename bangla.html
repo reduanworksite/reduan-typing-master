@@ -7,7 +7,7 @@
   <meta name="description" content="বাংলা টাইপিং অনুশীলন — কম্পিউটার, বাংলাদেশ ও দৈনন্দিন জীবন নিয়ে বাংলা অনুচ্ছেদ, লাইভ WPM, নির্ভুলতা ও ভুলের হিসাব।" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -32,7 +32,24 @@
         <h1>বাংলা টাইপিং অনুশীলন</h1>
         <p class="lead">নিচের বাংলা অনুচ্ছেদটি টাইপ করুন। সঠিক অক্ষর সবুজ হবে, ভুল অক্ষর লাল হবে। প্রথম অক্ষর টাইপ করলেই টাইমার শুরু হবে।</p>
 
-        <div class="note"><strong>গুরুত্বপূর্ণ:</strong> বাংলা টাইপ করতে আপনার নিজের কম্পিউটার/ফোনের বাংলা কীবোর্ড ব্যবহার করতে হবে — যেমন Avro বা Unicode বাংলা কীবোর্ড। এই ওয়েবসাইট কোনো বাংলা কীবোর্ড ইনস্টল করে না, আর এর ভেতরে কোনো বাংলা কীবোর্ড লেআউট তৈরি করা নেই। অনুচ্ছেদের নিচের QWERTY কীবোর্ডটি শুধু ইংরেজি অক্ষরের জন্য; বাংলা অক্ষরের ক্ষেত্রে পরের কী হাইলাইট নাও হতে পারে।</div>
+        <div class="note"><strong>দুটি কীবোর্ড মোড:</strong> <strong>Unicode</strong> মোডে আপনার নিজের সিস্টেমের বাংলা কীবোর্ড (যেমন Avro / Unicode) দিয়ে টাইপ করুন। <strong>Bijoy</strong> মোডে নিচের বিজয় কীবোর্ড দিয়ে টাইপ করুন — লাতিন কী চাপলেই সঠিক বাংলা অক্ষর আসবে (যেমন j → ক, d তারপর j → কি)। এই ওয়েবসাইট কোনো কীবোর্ড ইনস্টল করে না।</div>
+
+        <div class="toggle-group" role="group" aria-label="Keyboard mode">
+          <span class="toggle-label">কীবোর্ড:</span>
+          <button class="toggle-btn" id="kbModeUnicode" type="button" aria-pressed="true">Unicode (Avro / সিস্টেম)</button>
+          <button class="toggle-btn" id="kbModeBijoy" type="button" aria-pressed="false">Bijoy (বিজয়)</button>
+        </div>
+        <div class="toggle-group" role="group" aria-label="Display font">
+          <span class="toggle-label">লেখার ফন্ট:</span>
+          <button class="toggle-btn" id="dispUnicode" type="button" aria-pressed="true">Unicode (Hind Siliguri)</button>
+          <button class="toggle-btn" id="dispSutonny" type="button" aria-pressed="false">Bijoy (SutonnyMJ) Display</button>
+        </div>
+        <p class="progress-text"><strong>SutonnyMJ display</strong> — আপনার ডিভাইসে SutonnyMJ ফন্ট ইনস্টল থাকলেই তা ব্যবহার হবে; না থাকলে Hind Siliguri দেখাবে। এই মোডে অনুচ্ছেদটি Bijoy ANSI কোডে দেখানো হয় (শুধু দেখার জন্য); স্কোর সবসময় Unicode-তেই হিসাব হয়।</p>
+
+        <div class="conjunct-demo" lang="bn" aria-label="যুক্তবর্ণ ঠিক আছে?">
+          <span>ক্ষ</span><span>স্ত</span><span>ন্ত</span><span>জ্ঞ</span><span>হ্ম</span><span>স্ক</span>
+          <span class="demo-label">যুক্তবর্ণ ঠিক আছে? — প্রতিটি যুক্তবর্ণ একটানা জোড়া অক্ষর হিসেবে দেখা যাওয়া উচিত, ভাঙা নয়।</span>
+        </div>
 
         <input type="hidden" id="practiceMode" value="bangla" />
 
@@ -58,16 +75,19 @@
           <div class="stat"><strong id="statTime">0:00</strong><span>Time / সময়</span></div>
         </div>
 
-        <div class="passage" id="passage" aria-label="টাইপ করার অনুচ্ছেদ" lang="bn"></div>
-        <div class="progress-bar"><div id="progressFill"></div></div>
-        <p class="progress-text" id="statProgress">0 / 0 characters</p>
+        <div class="typing-card">
+          <div class="passage bangla" id="passage" aria-label="টাইপ করার অনুচ্ছেদ" lang="bn"></div>
+          <div class="progress-bar"><div id="progressFill"></div></div>
+          <p class="progress-text" id="statProgress">0 / 0 graphemes</p>
 
-        <label for="typingInput">এখানে টাইপ করুন / Type here</label>
-        <textarea id="typingInput" class="typing-input" lang="bn" placeholder="এখানে ক্লিক করুন এবং উপরের অনুচ্ছেদটি টাইপ করা শুরু করুন…" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
-        <p class="status-line" id="statusLine">Start typing in the box above. The timer starts on your first keystroke.</p>
+          <label for="typingInput">এখানে টাইপ করুন / Type here</label>
+          <textarea id="typingInput" class="typing-input bangla" lang="bn" placeholder="এখানে ক্লিক করুন এবং উপরের অনুচ্ছেদটি টাইপ করা শুরু করুন…" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
+          <p class="status-line" id="statusLine">Start typing in the box above. The timer starts on your first keystroke.</p>
+          <p class="pending-kar" id="pendingKar" hidden></p>
+        </div>
 
-        <div class="keyboard" id="keyboard" aria-label="On-screen QWERTY keyboard — highlights the next key"></div>
-        <p class="kb-caption">The highlighted key is the next letter to type (English QWERTY reference only). For Bangla, use your system Bangla keyboard.</p>
+        <div class="keyboard" id="keyboard" aria-label="On-screen keyboard — highlights the next key"></div>
+        <p class="kb-caption" id="kbCaption">The highlighted key is the next letter to type. For Bangla, use your system Bangla keyboard, or switch on Bijoy mode above.</p>
 
         <h2>বাংলা বর্ণমালা — Bangla Alphabet Reference</h2>
         <p>শিক্ষার্থীদের জন্য বর্ণমালার ছোট তালিকা। এটি শুধু দেখার জন্য — এখানে ক্লিক করলে টাইপ হবে না।</p>
@@ -82,7 +102,8 @@
           <span>হ</span><span>ড়</span><span>ঢ়</span><span>য়</span><span>ৎ</span><span>ং</span>
         </div>
 
-        <div class="note"><strong>Scoring rule:</strong> mistakes are counted from the text that is on screen right now. If you press Backspace and fix a wrong character, that mistake disappears from the count — it is not counted twice.</div>
+        <div class="note"><strong>Scoring rule:</strong> mistakes are counted per grapheme (যুক্তবর্ণ/কারসহ একটি অক্ষর = একটি একক) from the text that is on screen right now. If you press Backspace and fix a wrong grapheme, that mistake disappears from the count — it is not counted twice. WPM = (correct graphemes ÷ 5) ÷ minutes.</div>
+        <div class="note"><strong>Bijoy কীভাবে টাইপ করবেন:</strong> j → ক, k → ত, d তারপর j → কি, c তারপর j → কে, c + j + f → কো, g → ্ (হসন্ত — যুক্তবর্ণ বানাতে), Shift+A → রেফ (র্)। পূর্ণ স্বরবর্ণ: g তারপর f → আ, g তারপর d → ই, g তারপর c → এ; অ = Shift+F, ও = x। বিস্তারিত ম্যাপ README-তে আছে।</div>
 
         <p>ইংরেজিও অনুশীলন করুন: <a href="english.html">English Practice →</a> &nbsp;•&nbsp; সময় ধরে পরীক্ষা দিন: <a href="test.html">Speed Test →</a></p>
       </div>

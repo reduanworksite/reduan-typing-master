@@ -24,7 +24,7 @@
 html { scroll-behavior: smooth; }
 body {
   margin: 0;
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Bengali", sans-serif;
+  font-family: Inter, "Hind Siliguri", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Bengali", sans-serif;
   color: var(--ink);
   background: var(--bg);
   line-height: 1.65;
@@ -117,24 +117,34 @@ select:focus, textarea:focus { outline: 2px solid var(--blue); outline-offset: 1
   background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
   padding: 1rem 1.1rem; text-align: center;
 }
-.stat strong { display: block; font-size: 1.7rem; color: var(--navy); font-family: Sora, sans-serif; line-height: 1.2; }
+.stat strong { display: block; font-size: 1.7rem; color: var(--navy); font-family: Sora, sans-serif; line-height: 1.2; font-variant-numeric: tabular-nums; min-width: 2ch; }
 .stat span { font-size: 0.82rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
 .stat.highlight strong { color: var(--blue); }
 
 /* Typing area */
+.typing-card {
+  background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 1.2rem 1.3rem; margin: 1rem 0; max-width: 100%;
+  box-shadow: 0 2px 10px rgba(10, 31, 68, 0.04);
+}
 .passage {
   background: var(--bg-alt); border: 1px solid var(--line); border-radius: var(--radius);
-  padding: 1.4rem 1.5rem; font-size: 1.25rem; line-height: 2; min-height: 120px;
+  padding: 1.4rem 1.5rem; font-size: 1.3rem; line-height: 2; min-height: 120px;
   margin: 1rem 0; user-select: none;
+  /* v2 overflow guards: text always wraps inside the box, never runs out */
+  max-width: 100%; box-sizing: border-box;
+  overflow-wrap: break-word; word-break: break-word; overflow-x: hidden;
+  white-space: normal;
 }
-.passage .ch { border-radius: 3px; padding: 0 1px; }
+.passage .ch { border-radius: 3px; padding: 0 1px; display: inline; white-space: normal; }
 .passage .ch.current { background: var(--gold-light); outline: 2px solid var(--gold); }
 .passage .ch.correct { color: var(--green); background: var(--green-bg); }
 .passage .ch.wrong { color: var(--red); background: var(--red-bg); text-decoration: underline; }
 .passage .ch.space-wrong { background: var(--red-bg); }
 .typing-input {
   font-size: 1.15rem; line-height: 1.7; min-height: 110px; resize: vertical;
-  font-family: inherit;
+  font-family: inherit; width: 100%; max-width: 100%; box-sizing: border-box;
+  overflow-wrap: break-word; overflow-x: hidden;
 }
 .typing-input:disabled { background: var(--bg-alt); color: var(--muted); }
 .progress-bar { height: 8px; background: var(--line); border-radius: 999px; overflow: hidden; margin: 0.6rem 0 0.2rem; }
@@ -147,13 +157,55 @@ select:focus, textarea:focus { outline: 2px solid var(--blue); outline-offset: 1
 .note strong { color: #451a03; }
 .timer-big {
   font-family: Sora, sans-serif; font-size: 2.4rem; font-weight: 800; color: var(--navy);
-  text-align: center; margin: 0.5rem 0;
+  text-align: center; margin: 0.5rem 0; font-variant-numeric: tabular-nums;
 }
 .timer-big.urgent { color: var(--red); }
 
+/* v2: overflow guards for every layout container */
+.container, .section, .card, .keyboard, .controls, .stats-row { max-width: 100%; }
+.keyboard { max-width: 100%; overflow-x: hidden; }
+
+/* v2: Bangla typography — Hind Siliguri first, large and roomy so
+   conjuncts never look small or broken */
+.passage.bangla {
+  font-family: "Hind Siliguri", "Noto Sans Bengali", sans-serif;
+  font-size: 1.6rem; line-height: 2.3; letter-spacing: normal; word-spacing: normal;
+}
+.typing-input.bangla {
+  font-family: "Hind Siliguri", "Noto Sans Bengali", sans-serif;
+  font-size: 1.4rem; line-height: 2;
+}
+.passage.bijoy-display {
+  font-family: "SutonnyMJ", "Hind Siliguri", "Noto Sans Bengali", sans-serif;
+}
+h1[lang="bn"], h2[lang="bn"] { font-family: "Hind Siliguri", "Noto Sans Bengali", sans-serif; }
+.conjunct-demo {
+  font-family: "Hind Siliguri", "Noto Sans Bengali", sans-serif;
+  font-size: 1.8rem; line-height: 2.2; text-align: center;
+  background: var(--bg-alt); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 1rem; margin: 1rem 0; max-width: 100%;
+  overflow-wrap: break-word; word-break: break-word;
+}
+.conjunct-demo span {
+  display: inline-block; background: #fff; border: 1px solid var(--line);
+  border-radius: 10px; padding: 0.3rem 0.9rem; margin: 0.25rem;
+}
+.conjunct-demo .demo-label { display: block; font-size: 0.9rem; color: var(--muted); margin-top: 0.6rem; }
+
+/* v2: mode toggle buttons (keyboard + display) */
+.toggle-group { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; margin: 0.8rem 0; max-width: 100%; }
+.toggle-group .toggle-label { font-weight: 700; font-size: 0.92rem; margin-right: 0.2rem; }
+.toggle-btn {
+  padding: 0.5rem 1rem; border-radius: 999px; border: 1px solid var(--line);
+  background: #fff; color: var(--navy); font-weight: 700; font-size: 0.9rem;
+  cursor: pointer; font-family: inherit;
+}
+.toggle-btn[aria-pressed="true"] { background: var(--navy); color: #fff; border-color: var(--navy); }
+.pending-kar { font-weight: 700; color: var(--blue); min-height: 1.4em; }
+
 /* On-screen keyboard */
 .keyboard { margin: 1.4rem 0; user-select: none; }
-.kb-row { display: flex; gap: 4px; justify-content: center; margin-bottom: 4px; }
+.kb-row { display: flex; gap: 4px; justify-content: center; margin-bottom: 4px; flex-wrap: wrap; }
 .key {
   flex: 1; max-width: 52px; min-width: 0; height: 44px;
   display: grid; place-items: center;
@@ -163,16 +215,23 @@ select:focus, textarea:focus { outline: 2px solid var(--blue); outline-offset: 1
 }
 .key.wide { max-width: 90px; font-size: 0.8rem; }
 .key.space { max-width: 260px; }
+.key.bijoy-key { flex-direction: column; line-height: 1.15; height: 52px; padding: 2px 1px; }
+.key .bk-bn { font-size: 1.05rem; font-family: "Hind Siliguri", "Noto Sans Bengali", sans-serif; }
+.key .bk-lat { font-size: 0.62rem; color: var(--muted); font-weight: 600; }
+.key .bk-sh { font-size: 0.62rem; color: var(--muted); }
 .key.next { background: var(--blue); color: #fff; border-color: var(--blue-dark); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4); }
 .kb-caption { text-align: center; font-size: 0.85rem; color: var(--muted); margin-top: 0.5rem; }
 
 /* Bangla alphabet reference */
 .alphabet {
   display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.5rem; margin: 1rem 0;
+  max-width: 100%;
 }
 .alphabet span {
   background: #fff; border: 1px solid var(--line); border-radius: 10px;
-  padding: 0.6rem 0.2rem; text-align: center; font-size: 1.3rem; font-weight: 600;
+  padding: 0.6rem 0.2rem; text-align: center; font-size: 1.6rem; font-weight: 600;
+  font-family: "Hind Siliguri", "Noto Sans Bengali", sans-serif;
+  overflow-wrap: break-word;
 }
 
 /* Results / progress */
@@ -218,9 +277,21 @@ th { color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-s
   .site-nav a { padding: 0.7rem 0.4rem; border-bottom: 1px solid #f1f5f9; }
   .site-nav a:last-child { border-bottom: 0; }
   .section { padding: 2.6rem 0; }
-  .passage { font-size: 1.1rem; line-height: 1.9; }
+  .passage { font-size: 1.15rem; line-height: 2; }
+  .passage.bangla { font-size: 1.35rem; line-height: 2.2; }
+  .typing-input.bangla { font-size: 1.25rem; }
+  .conjunct-demo { font-size: 1.5rem; }
   .key { height: 38px; font-size: 0.82rem; }
   .key.wide { font-size: 0.68rem; }
+  .key.bijoy-key { height: 46px; }
+  .key .bk-bn { font-size: 0.95rem; }
+  .typing-card { padding: 0.9rem; }
+}
+@media (max-width: 380px) {
+  .passage { padding: 1rem 0.9rem; }
+  .passage.bangla { font-size: 1.25rem; }
+  .alphabet { grid-template-columns: repeat(3, 1fr); }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
