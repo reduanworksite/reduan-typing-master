@@ -1,10 +1,10 @@
-# Reduan Typing Master — Version 2
+# Reduan Typing Master — Version 2.1
 
 A complete typing learning & practice website — English and Bangla typing practice, timed speed tests with real WPM and accuracy, and progress tracking. Free, in the browser, no sign-up.
 
 **Live website:** https://reduanworksite.github.io/reduan-typing-master/
 
-> **Status: version 2 built locally — will be republished, not yet live with v2.** The live URL above currently serves version 1. Version 2 (below) is built and verified locally in this repository's files; it goes live when the updated files are published to GitHub Pages. Do not treat v2 as live until that publishing step is confirmed.
+> **Status: version 2 is LIVE (commit b5944ac). Version 2.1 (below) is built and verified locally in this repository's files; it goes live when the updated files are published to GitHub Pages. Do not treat v2.1 as live until that publishing step is confirmed.**
 
 By Reduan Hossain, Reduan Computer — https://www.facebook.com/reduancomputer
 
@@ -19,6 +19,7 @@ By Reduan Hossain, Reduan Computer — https://www.facebook.com/reduancomputer
 | 5 | English (and Bangla) text could overflow its box — `.passage` had no wrap/overflow guards. | `.passage`, `.typing-input`, `.container`, `.section`, `.card`, `.keyboard` now have `max-width:100%`, `overflow-wrap:break-word`, `word-break:break-word`, `overflow-x:hidden`; passage and input sit together in one `.typing-card`. Long sentences wrap to the next line on desktop and mobile. |
 | 6 | Passages used decomposed nukta forms (ড+় for ড়, য+় for য়), which do **not** match what most Bangla keyboards type (precomposed ড়/য়) — so a correctly typed ড় could be marked wrong. | All Bangla passages were normalised to precomposed letters (ড় U+09DC, ঢ় U+09DD, য় U+09DF) — 31 occurrences fixed. The visible text is unchanged. The converter also handles nukta forms as a fallback. |
 | 7 | Passage audit | All Bangla passages audited: exactly one normal space between words, never a space inside a word, conjunct or kar. |
+| 8 | **v2.1 — Ctrl+V paste of Unicode Bangla did not work.** Pasted text from websites/Word/Google Docs often arrives decomposed (ড় as ড + ়, য় as য + ়), while passages are precomposed — every pasted grapheme compared unequal, so the whole paste went red and scored 0. There was also no paste handler at all. | A `normalizeUnicode()` helper (NFC) is now applied in **both** directions — to the passage in `setPassage()` and to the typed text in `currentTyped()` and `handleInput()` (caret preserved as best as possible) — so decomposed ড়/য় score correctly. An explicit `'paste'` handler on **every** typing input (practice + Speed Test, shared engine) cleans pasted text: NFC, zero-width space (U+200B) and BOM (U+FEFF) stripped, line breaks/tabs → single space, runs of 2+ spaces → one space. ZWJ (U+200D) / ZWNJ (U+200C) are kept. In Bijoy mode a buffered pre-base kar is cleared before the paste, and Ctrl+V / Ctrl+A / Ctrl+C / Ctrl+X pass through the Bijoy keydown handler untouched (it returns early on ctrlKey/metaKey/altKey). Paste works identically in Unicode mode, Bijoy mode and English. |
 
 ## Features
 
@@ -98,7 +99,15 @@ Every page has the same header navigation linking to all five pages, and the sam
 
 ## How to run locally
 
-No build step, no server framework needed. Open `index.html` in a browser, or serve the folder:
+## Paste test (v2.1) — how to check Ctrl+V works
+
+1. **Bangla paste:** open [Bangla Practice](https://reduanworksite.github.io/reduan-typing-master/bangla.html), copy a sentence from a website, Word or Google Docs (e.g. one containing ড় or য়), click the typing box and press **Ctrl+V** — the pasted text should appear and correct graphemes turn green, not all red.
+2. **Bijoy mode paste:** switch the keyboard toggle to **Bijoy**, paste the same text — it must work the same way, and the next Bijoy keystroke after the paste must not be corrupted by a leftover buffered kar.
+3. **English paste:** open [English Practice](https://reduanworksite.github.io/reduan-typing-master/english.html), paste a sentence with a line break or double spaces — it should land as one clean line inside the box.
+4. **Shortcuts still work:** Ctrl+A (select all), Ctrl+C (copy), Ctrl+X (cut) inside the typing box must behave normally in both Bangla modes.
+5. **Node check (already run, all passed):** a decomposed passage (ড় = ড + ়, য় = য + ়) run through `normalizeUnicode` + `segmentGraphemes` gives a grapheme list identical to the passage's, and a simulated paste of it scores 32/32 (100%); pasted text with `\n`, double spaces and U+200B is cleaned to single spaces with no U+200B/BOM, and ZWJ/ZWNJ are preserved.
+
+## No build step, no server framework needed. Open `index.html` in a browser, or serve the folder:
 
 ```bash
 python3 -m http.server 8000

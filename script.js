@@ -1,4 +1,14 @@
-/* Reduan Typing Master — shared JavaScript (no libraries). Version 2.
+/* Reduan Typing Master — shared JavaScript (no libraries). Version 2.1.
+ *
+ * v2.1 fix (see README.md): Ctrl+V paste of Unicode Bangla text now
+ * works. Pasted/typed text is normalised to NFC before comparison, so
+ * decomposed forms (ড় = ড + ়, য় = য + ়) copied from websites, Word or
+ * Google Docs score correctly instead of going all red. An explicit
+ * 'paste' handler cleans the pasted text (zero-width space / BOM and
+ * line breaks removed, runs of whitespace collapsed) and works the
+ * same in Unicode mode, Bijoy mode and English. Ctrl shortcuts
+ * (Ctrl+V / Ctrl+A / Ctrl+C / Ctrl+X) pass through the Bijoy keydown
+ * handler untouched.
  *
  * v2 fixes (see README.md for the full report):
  * 1. Bangla grapheme segmentation: passages and typed text are split into
@@ -89,6 +99,36 @@
       return out;
     }
     return segmentGraphemesFallback(text);
+  }
+
+  /* ---------- Unicode normalisation (v2.1 — paste fix) ----------
+   * Bangla text copied from websites, Word or Google Docs often arrives
+   * DECOMPOSED (ড় as ড + ় U+09BC, য় as য + ়), while the passages are
+   * stored PRECOMPOSED (ড় U+09DC, য় U+09DF). NFC composes them back,
+   * so a pasted or IME-typed grapheme compares equal to the passage.
+   * Applied in BOTH directions: to the passage in setPassage() and to
+   * the typed text in currentTyped()/handleInput(). */
+  function normalizeUnicode(text) {
+    if (text == null) return '';
+    var s = String(text);
+    try {
+      if (s.normalize) s = s.normalize('NFC');
+    } catch (e) { /* String.normalize unavailable: use text as-is */ }
+    return s;
+  }
+
+  /* Paste-only cleaning: strip zero-width space (U+200B) and BOM
+   * (U+FEFF) that often hitch a ride in copied text, turn line breaks
+   * and tabs into a single space each (passages are single-line), and
+   * collapse runs of 2+ spaces to one. Legitimate single spaces are
+   * kept. U+200D (ZWJ) and U+200C (ZWNJ) are NOT stripped — they can
+   * be meaningful inside Bangla conjuncts. */
+  function cleanPastedText(text) {
+    var s = normalizeUnicode(text);
+    s = s.replace(/[\u200B\uFEFF]/g, '');
+    s = s.replace(/[\r\n\t]+/g, ' ');
+    s = s.replace(/ {2,}/g, ' ');
+    return s;
   }
 
   /* ---------- Bijoy keyboard layout (Bijoy Bayanno) ----------
@@ -291,6 +331,8 @@
     window.RTM = {
       segmentGraphemes: segmentGraphemes,
       segmentGraphemesFallback: segmentGraphemesFallback,
+      normalizeUnicode: normalizeUnicode,
+      cleanPastedText: cleanPastedText,
       unicodeToBijoyTokens: unicodeToBijoyTokens,
       unicodeToBijoyAnsi: unicodeToBijoyAnsi,
       nextBijoyKeyFor: nextBijoyKeyFor,
@@ -301,6 +343,8 @@
     module.exports = {
       segmentGraphemes: segmentGraphemes,
       segmentGraphemesFallback: segmentGraphemesFallback,
+      normalizeUnicode: normalizeUnicode,
+      cleanPastedText: cleanPastedText,
       unicodeToBijoyTokens: unicodeToBijoyTokens,
       unicodeToBijoyAnsi: unicodeToBijoyAnsi,
       nextBijoyKeyFor: nextBijoyKeyFor,
@@ -602,8 +646,8 @@
     }
 
     function setPassage(text) {
-      passageText = text;
-      targetGraphemes = segmentGraphemes(text);
+      passageText = normalizeUnicode(text);
+      targetGraphemes = segmentGraphemes(passageText);
       renderPassageSpans();
       reset();
     }
@@ -615,7 +659,7 @@
       render();
     }
 
-    function currentTyped() { return segmentGraphemes(inputEl.value); }
+    function currentTyped() { return segmentGraphemes(normalizeUnicode(inputEl.value)); }
 
     function compute() {
       var typed = currentTyped();
@@ -689,6 +733,23 @@
 
     function handleInput() {
       if (finished) return;
+      /* v2.1: normalise what is in the box BEFORE scoring/trimming, so
+       * decomposed input from paste or an IME (ড় as ড + ়) is fixed in
+       * place. Caret position is preserved as best as possible — NFC
+       * can only shrink the text, so the caret is clamped to the new
+       * length. Programmatic assignment does not re-fire 'input'. */
+      var rawValue = inputEl.value;
+      var normValue = normalizeUnicode(rawValue);
+      if (normValue !== rawValue) {
+        var cs = inputEl.selectionStart, ce = inputEl.selectionEnd;
+        inputEl.value = normValue;
+        if (typeof cs === 'number') {
+          inputEl.selectionStart = Math.min(cs, normValue.length);
+          inputEl.selectionEnd = Math.min(ce, normValue.length);
+        }
+      }
+      /* Trim AFTER normalisation, so the +20 allowance counts real
+       * graphemes, not decomposed code points. */
       if (currentTyped().length > targetGraphemes.length + 20) {
         inputEl.value = currentTyped().slice(0, targetGraphemes.length + 20).join('');
       }
@@ -707,6 +768,37 @@
     }
 
     inputEl.addEventListener('input', handleInput);
+    /* v2.1: explicit paste handler — Ctrl+V (and long-press / menu
+     * paste on mobile) works the same in Unicode mode, Bijoy mode and
+     * English. The pasted text is cleaned (NFC + zero-width space /
+     * BOM stripped + line breaks/tabs to space + runs of whitespace
+     * collapsed) and inserted at the cursor, replacing any selection.
+     * A buffered Bijoy pre-base kar is cleared first, so it cannot
+     * corrupt the next keystroke after a paste. Ctrl+V itself is
+     * never blocked by the Bijoy keydown handler — handleKeydown
+     * returns early whenever ctrlKey/metaKey/altKey is held, so
+     * Ctrl+V / Ctrl+A / Ctrl+C / Ctrl+X all pass through untouched. */
+    inputEl.addEventListener('paste', function (e) {
+      if (finished) return;
+      var dt = (e.clipboardData || window.clipboardData);
+      var text = dt ? dt.getData('text/plain') : '';
+      if (!text) return;
+      e.preventDefault();
+      if (opts.clearPending) opts.clearPending();
+      var cleaned = cleanPastedText(text);
+      if (!cleaned) return;
+      var start = inputEl.selectionStart;
+      var end = inputEl.selectionEnd;
+      if (typeof start === 'number' && inputEl.setRangeText) {
+        inputEl.setRangeText(cleaned, start, end, 'end');
+      } else if (typeof start === 'number') {
+        inputEl.value = inputEl.value.slice(0, start) + cleaned + inputEl.value.slice(end);
+        inputEl.selectionStart = inputEl.selectionEnd = start + cleaned.length;
+      } else {
+        inputEl.value += cleaned;
+      }
+      inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+    });
     passageEl.addEventListener('click', function () { inputEl.focus(); });
 
     return {
@@ -902,6 +994,7 @@
       keyboardEl: keyboardEl,
       unitLabel: isBangla ? 'graphemes' : 'characters',
       getKeyboardMode: function () { return isBangla && kbMode === 'bijoy' ? 'bijoy' : 'qwerty'; },
+      clearPending: function () { if (bijoyHandler) bijoyHandler.clearPending(); },
       stats: {
         wpm: $('statWpm'), accuracy: $('statAccuracy'),
         mistakes: $('statMistakes'), time: $('statTime'),
